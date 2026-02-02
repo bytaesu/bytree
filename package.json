@@ -1,6 +1,6 @@
 {
   "name": "bytree",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Git worktree manager that copies excluded files",
   "type": "module",
   "bin": {
