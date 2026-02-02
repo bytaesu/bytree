@@ -1,14 +1,24 @@
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { $ } from "bun";
 
 /**
- * Get the root of the git repository
+ * Get the root of the main git repository (not worktree)
  */
 export async function getRepoRoot(cwd: string): Promise<string> {
-	const result = await $`git -C ${cwd} rev-parse --show-toplevel`.quiet();
-	return result.text().trim();
+	const result = await $`git -C ${cwd} rev-parse --git-common-dir`.quiet();
+	const gitCommonDir = result.text().trim();
+
+	// If .git, we're in the main repo - use show-toplevel
+	if (gitCommonDir === ".git") {
+		const topLevel = await $`git -C ${cwd} rev-parse --show-toplevel`.quiet();
+		return topLevel.text().trim();
+	}
+
+	// Otherwise, gitCommonDir is absolute path to main repo's .git
+	// e.g., /path/to/repo/.git -> /path/to/repo
+	return dirname(resolve(cwd, gitCommonDir));
 }
 
 /**
