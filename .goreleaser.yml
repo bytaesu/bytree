@@ -25,6 +25,8 @@ brews:
   - repository:
       owner: bytaesu
       name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    directory: Formula
     homepage: https://github.com/bytaesu/bytree
     description: Git worktree manager that copies excluded files
     license: MIT
