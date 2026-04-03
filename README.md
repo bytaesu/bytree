@@ -17,6 +17,16 @@ AI agents work best with personalized settings (`.claude/`, `.codex/`, IDE confi
 
 ## Usage
 
+First, define local settings you want copied across worktrees in `.git/info/exclude`:
+
+```
+/.claude/
+/.codex/
+/.github/prompts/
+```
+
+bytree reads these patterns to decide what to copy.
+
 - ### `bytree add <name>`
 
   Create a worktree with excluded files copied automatically.

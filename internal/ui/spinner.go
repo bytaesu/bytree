@@ -2,60 +2,29 @@ package ui
 
 import (
 	"fmt"
-
-	"github.com/charmbracelet/bubbles/spinner"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"sync/atomic"
+	"time"
 )
 
-type resultMsg struct{ err error }
+var frames = []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
 
 // SpinWhile shows a spinner with the given message while fn runs.
-// Returns the error from fn.
 func SpinWhile(msg string, fn func() error) error {
-	var fnErr error
-	m := spinnerModel{
-		spinner: spinner.New(
-			spinner.WithSpinner(spinner.Dot),
-			spinner.WithStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("6"))),
-		),
-		message: msg,
-		fn:      func() tea.Msg { fnErr = fn(); return resultMsg{fnErr} },
-	}
+	var done atomic.Bool
 
-	p := tea.NewProgram(m)
-	if _, err := p.Run(); err != nil {
-		return err
-	}
-	return fnErr
-}
+	go func() {
+		i := 0
+		for !done.Load() {
+			frame := Dim.Render(frames[i%len(frames)] + " " + msg)
+			fmt.Printf("\r\033[2K%s", frame)
+			i++
+			time.Sleep(80 * time.Millisecond)
+		}
+	}()
 
-type spinnerModel struct {
-	spinner spinner.Model
-	message string
-	fn      func() tea.Msg
-	done    bool
-}
+	err := fn()
+	done.Store(true)
+	fmt.Print("\r\033[2K")
 
-func (m spinnerModel) Init() tea.Cmd {
-	return tea.Batch(m.spinner.Tick, m.fn)
-}
-
-func (m spinnerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg.(type) {
-	case resultMsg:
-		m.done = true
-		return m, tea.Quit
-	}
-
-	var cmd tea.Cmd
-	m.spinner, cmd = m.spinner.Update(msg)
-	return m, cmd
-}
-
-func (m spinnerModel) View() string {
-	if m.done {
-		return ""
-	}
-	return fmt.Sprintf("%s %s", m.spinner.View(), Dim.Render(m.message))
+	return err
 }
