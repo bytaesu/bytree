@@ -1,71 +1,57 @@
 # bytree
 
-Git worktree manager that automatically copies files excluded via `.git/info/exclude`
+`git worktree` + your excluded files.
 
 ## Why?
 
-AI agents work best for you with personalized settings like project instructions, local configs, and custom workflows. When running multiple agents, working in the same workspace can cause conflicts.
-
-Isolated worktrees solve this, but `git worktree` doesn't copy files in `.git/info/exclude` (like `.claude/`, IDE settings). You have to manually copy them every time.
-
-**bytree** solves this by automatically copying excluded files when creating a worktree.
+AI agents work best with personalized settings (`.claude/`, `.codex/`, IDE configs). When running multiple agents in isolated worktrees, `git worktree` doesn't copy these excluded files. **bytree** does.
 
 ## Install
 
-```bash
-bun add -g bytree
-```
+| Method   | Command                                                       |
+| -------- | ------------------------------------------------------------- |
+| Go       | `go install github.com/bytaesu/bytree/cmd/bytree@latest`      |
+| npm      | `npm install -g bytree`                                       |
+| Homebrew | `brew install bytaesu/tap/bytree`                             |
+| Binary   | [GitHub Releases](https://github.com/bytaesu/bytree/releases) |
 
 ## Usage
 
-### Setup excluded files
+### `bytree add <name>`
 
-Add patterns to `.git/info/exclude` in your repository:
-
-```txt
-/.claude/
-/__local__/
-
-# ...
-```
-
-### Create a worktree
+Create a worktree with excluded files copied automatically.
 
 ```bash
 bytree add feature-x
+bytree add issue-123 --base develop
 ```
 
-This will:
+Worktrees are created at `../<repo>-bytree/<name>` on branch `bytree/<name>`.
 
-1. Create a worktree at `../<repo>-bytree/feature-x`
-2. Create branch `bytree/feature-x`
-3. Copy all files matching patterns in `.git/info/exclude`
+### `bytree sync`
 
-### List worktrees
+Re-sync excluded files into the current worktree.
 
 ```bash
-bytree list
+cd path/to/worktree
+bytree sync
 ```
 
-### Remove a worktree
+### `bytree list`
 
-```bash
-bytree remove feature-x
-```
+List all bytree-managed worktrees.
 
-### View exclude patterns
+### `bytree remove <name>`
 
-```bash
-bytree excluded
-```
+Remove a worktree and its branch.
 
-## Options
+### `bytree excluded`
 
-```
---base <branch>    Base branch (default: auto-detect)
---help, -h         Show help
---version, -v      Show version
-```
+Show patterns in `.git/info/exclude`.
+
+## How it works
+
+Reads `.git/info/exclude` (not `.gitignore`), finds matching files, copies them. That's it.
 
 ## License
 

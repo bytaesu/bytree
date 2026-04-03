@@ -1,0 +1,33 @@
+version: 2
+
+builds:
+  - main: ./cmd/bytree/
+    binary: bytree
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+
+brews:
+  - repository:
+      owner: bytaesu
+      name: homebrew-tap
+    homepage: https://github.com/bytaesu/bytree
+    description: Git worktree manager that copies excluded files
+    license: MIT
+
+changelog:
+  use: github-native
