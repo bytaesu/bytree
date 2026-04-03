@@ -17,37 +17,37 @@ AI agents work best with personalized settings (`.claude/`, `.codex/`, IDE confi
 
 ## Usage
 
-### `bytree add <name>`
+- ### `bytree add <name>`
 
-Create a worktree with excluded files copied automatically.
+  Create a worktree with excluded files copied automatically.
 
-```bash
-bytree add feature-x
-bytree add issue-123 --base develop
-```
+  ```bash
+  bytree add feature-x
+  bytree add issue-123 --base develop
+  ```
 
-Worktrees are created at `../<repo>-bytree/<name>` on branch `bytree/<name>`.
+  Worktrees are created at `../<repo>-bytree/<name>` on branch `bytree/<name>`.
 
-### `bytree sync`
+- ### `bytree sync`
 
-Re-sync excluded files into the current worktree.
+  Re-sync excluded files into the current worktree.
 
-```bash
-cd path/to/worktree
-bytree sync
-```
+  ```bash
+  cd path/to/worktree
+  bytree sync
+  ```
 
-### `bytree list`
+- ### `bytree list`
 
-List all bytree-managed worktrees.
+  List all bytree-managed worktrees.
 
-### `bytree remove <name>`
+- ### `bytree remove <name>`
 
-Remove a worktree and its branch.
+  Remove a worktree and its branch.
 
-### `bytree excluded`
+- ### `bytree excluded`
 
-Show patterns in `.git/info/exclude`.
+  Show patterns in `.git/info/exclude`.
 
 ## How it works
 
